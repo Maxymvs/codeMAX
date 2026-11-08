@@ -70,6 +70,17 @@ jobs:
         shell: bash
         run: grep -E '^T3CODE_(CLERK_PUBLISHABLE_KEY|CLERK_JWT_TEMPLATE|CLERK_CLI_OAUTH_CLIENT_ID|RELAY_URL)=' .env.example >> "$GITHUB_ENV"
 
+      # Electron and electron-builder download their binaries from GitHub releases, which return
+      # intermittent 504s; a warm cache avoids most of those downloads.
+      - name: Cache Electron downloads
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/Library/Caches/electron
+            ~/Library/Caches/electron-builder
+          key: electron-downloads-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: electron-downloads-${{ runner.os }}-${{ runner.arch }}-
+
       - name: Build desktop artifact
         shell: bash
         env:
@@ -100,7 +111,12 @@ jobs:
             export T3CODE_MACOS_PROVISIONING_PROFILE="$profile_path"
             args+=(--signed)
           fi
-          vp run dist:desktop:artifact "${args[@]}"
+          for attempt in 1 2 3; do
+            if vp run dist:desktop:artifact "${args[@]}"; then break; fi
+            [[ $attempt -lt 3 ]] || exit 1
+            echo "::warning::Build attempt $attempt failed (often a GitHub download 504); retrying in 2 minutes."
+            sleep 120
+          done
           ls -la release
 
       - name: Upload build (dry run)

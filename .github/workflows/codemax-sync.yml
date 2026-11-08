@@ -13,6 +13,11 @@ on:
         description: "Upstream tag to build from (default: latest stable)"
         required: false
         type: string
+      release:
+        description: "Start codeMAX Release if this version has no release yet"
+        required: false
+        default: true
+        type: boolean
 
 permissions:
   contents: read
@@ -28,19 +33,19 @@ jobs:
     timeout-minutes: 20
     steps:
       # GITHUB_TOKEN cannot push commits that touch .github/workflows, and upstream changes those
-      # constantly, so pushes use a personal access token (Contents + Workflows: read/write).
-      - name: Check sync token
+      # constantly, so pushes use a write deploy key scoped to this repository.
+      - name: Check sync key
         env:
-          SYNC_TOKEN: ${{ secrets.CODEMAX_SYNC_TOKEN }}
+          SYNC_KEY: ${{ secrets.CODEMAX_SYNC_SSH_KEY }}
         run: |
-          [[ -n "$SYNC_TOKEN" ]] || { echo "::error::Add the CODEMAX_SYNC_TOKEN secret (see CODEMAX.md)."; exit 1; }
+          [[ -n "$SYNC_KEY" ]] || { echo "::error::Add the CODEMAX_SYNC_SSH_KEY secret (see CODEMAX.md)."; exit 1; }
 
       - name: Checkout
         uses: actions/checkout@v4
         with:
           ref: fork/infra
           fetch-depth: 0
-          token: ${{ secrets.CODEMAX_SYNC_TOKEN }}
+          ssh-key: ${{ secrets.CODEMAX_SYNC_SSH_KEY }}
 
       - name: Configure git
         run: |
@@ -63,6 +68,7 @@ jobs:
             while read -r id; do gh workflow disable "$id" --repo "$GITHUB_REPOSITORY"; done
 
       - name: Start release if this version is new
+        if: ${{ github.event_name == 'schedule' || inputs.release }}
         env:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ steps.sync.outputs.version }}
