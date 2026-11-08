@@ -46,10 +46,10 @@ the exact `git rebase --onto` command. Rebase that branch onto the new tag, reso
 
 | | T3 Code | codeMAX |
 | - | - | - |
-| App name / bundle ID | T3 Code (Beta) / `com.t3tools.t3code` | codeMAX / `com.maxymvs.codemax` |
+| App name / bundle ID | T3 Code (Beta) / `com.t3tools.t3code` | codeMAX / `me.maxym.codemax` |
 | Data (settings, DB, worktrees, logs) | `~/.t3` | `~/.codemax` |
 | Electron profile, keychain entry | `~/Library/Application Support/t3code-v2` | `~/Library/Application Support/codemax` |
-| Background service | `com.t3tools.t3code.service` | `com.maxymvs.codemax.service` |
+| Background service | `com.t3tools.t3code.service` | `me.maxym.codemax.service` |
 | `t3code://` links | registered | not registered (links open T3 Code) |
 | Updates from | pingdotgg/t3code releases | Maxymvs/codeMAX releases |
 | Icon | stable icon | nightly icon |
@@ -58,17 +58,17 @@ The renderer keeps the internal `t3code://app` origin on purpose: remote T3 serv
 T3 Connect) only accept that origin. Don't use **Install `t3` command** in codeMAX; it would
 shadow T3 Code's `t3` on your PATH.
 
-## One-time setup (secrets)
+## Secrets (already configured)
 
-Repository → Settings → Secrets and variables → Actions → New repository secret:
+Repository → Settings → Secrets and variables → Actions. To rotate one, replace it there:
 
 | Secret | Value |
 | - | - |
-| `CODEMAX_SYNC_TOKEN` | Fine-grained PAT for `Maxymvs/codeMAX` with **Contents** and **Workflows** read/write |
+| `CODEMAX_SYNC_SSH_KEY` | Private half of the write **deploy key** "codeMAX Sync (Actions)" (Settings → Deploy keys). GITHUB_TOKEN cannot push workflow-file changes; a deploy key can. |
 | `CSC_LINK` | `base64 -i DeveloperID.p12` (Developer ID Application certificate + key) |
 | `CSC_KEY_PASSWORD` | Password of that `.p12` |
 | `APPLE_API_KEY` | Contents of the App Store Connect API key `AuthKey_XXXX.p8` |
 | `APPLE_API_KEY_ID` | That key's ID |
 | `APPLE_API_ISSUER` | Issuer ID (App Store Connect → Users and Access → Integrations) |
 | `APPLE_TEAM_ID` | 10-character Team ID |
-| `MACOS_PROVISIONING_PROFILE` | `base64 -i codeMAX.provisionprofile`: a **Developer ID** profile for App ID `com.maxymvs.codemax` with the **Associated Domains** capability |
+| `MACOS_PROVISIONING_PROFILE` | `base64 -i codeMAX.provisionprofile`: a **Developer ID** profile for App ID `me.maxym.codemax` with the **Associated Domains** capability |
