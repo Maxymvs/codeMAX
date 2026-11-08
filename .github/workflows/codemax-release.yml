@@ -70,16 +70,46 @@ jobs:
         shell: bash
         run: grep -E '^T3CODE_(CLERK_PUBLISHABLE_KEY|CLERK_JWT_TEMPLATE|CLERK_CLI_OAUTH_CLIENT_ID|RELAY_URL)=' .env.example >> "$GITHUB_ENV"
 
-      # Electron and electron-builder download their binaries from GitHub releases, which return
-      # intermittent 504s; a warm cache avoids most of those downloads.
-      - name: Cache Electron downloads
+      # GitHub release downloads intermittently return 504, and electron-builder gives up after a few
+      # seconds (it failed every attempt on Electron's SHASUMS256.txt). Fetch Electron here with
+      # patient retries, verify it, cache it, and serve it to electron-builder via ELECTRON_MIRROR.
+      - name: Resolve Electron version
+        id: electron
+        shell: bash
+        run: echo "version=$(node -p "const p=require('./apps/desktop/package.json'); (p.dependencies||{}).electron || (p.devDependencies||{}).electron")" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Electron
         uses: actions/cache@v4
         with:
-          path: |
-            ~/Library/Caches/electron
-            ~/Library/Caches/electron-builder
-          key: electron-downloads-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: electron-downloads-${{ runner.os }}-${{ runner.arch }}-
+          path: ~/electron-mirror
+          key: electron-mirror-darwin-arm64-${{ steps.electron.outputs.version }}
+
+      - name: Mirror Electron locally
+        shell: bash
+        env:
+          ELECTRON_VERSION: ${{ steps.electron.outputs.version }}
+        run: |
+          set -euo pipefail
+          v="$ELECTRON_VERSION"
+          zip="electron-v$v-darwin-arm64.zip"
+          dir="$HOME/electron-mirror/v$v"
+          mkdir -p "$dir"
+          for f in SHASUMS256.txt "$zip"; do
+            for attempt in $(seq 1 30); do
+              [[ -s "$dir/$f" ]] && break
+              if curl -fsSL --max-time 600 -o "$dir/$f.part" "https://github.com/electron/electron/releases/download/v$v/$f"; then
+                mv "$dir/$f.part" "$dir/$f"
+              else
+                echo "Download of $f failed (attempt $attempt); retrying in 30s."
+                sleep 30
+              fi
+            done
+            [[ -s "$dir/$f" ]] || { echo "::error::Could not download $f from GitHub."; exit 1; }
+          done
+          (cd "$dir" && grep -E " \*?$zip\$" SHASUMS256.txt | shasum -a 256 -c -)
+          nohup python3 -m http.server 8765 --bind 127.0.0.1 --directory "$HOME/electron-mirror" > /dev/null 2>&1 &
+          for i in $(seq 1 20); do curl -fsI "http://127.0.0.1:8765/v$v/SHASUMS256.txt" > /dev/null 2>&1 && break; sleep 0.5; done
+          echo "ELECTRON_MIRROR=http://127.0.0.1:8765/" >> "$GITHUB_ENV"
 
       - name: Build desktop artifact
         shell: bash
