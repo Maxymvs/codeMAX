@@ -1,0 +1,5 @@
+# Branches applied, in order, on top of the latest upstream stable tag to build `codemax`.
+# Each entry must exist on origin (github.com/Maxymvs/codeMAX). Only the branch's own commits
+# (those not on upstream main) are applied. Remove a line to drop that change from codeMAX,
+# e.g. once upstream merges your PR or ships its own version of the feature.
+fork/infra

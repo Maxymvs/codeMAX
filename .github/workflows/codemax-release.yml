@@ -1,0 +1,130 @@
+name: codeMAX Release
+
+# Builds the signed macOS arm64 app from the `codemax` branch and publishes it as a GitHub release
+# of this fork. Installed codeMAX apps auto-update from these releases (latest-mac.yml).
+# Usually started by codemax-sync.yml when a new upstream stable version is available.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Upstream version codemax is built on, e.g. 0.1.7 (the release is tagged v<version>)"
+        required: true
+        type: string
+      ref:
+        description: "Branch or commit to build"
+        required: false
+        default: codemax
+        type: string
+      dry_run:
+        description: "Build unsigned and upload as a workflow artifact only (no release)"
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+concurrency:
+  group: codemax-release
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build and publish macOS arm64
+    runs-on: macos-15
+    timeout-minutes: 120
+    env:
+      VERSION: ${{ inputs.version }}
+      DRY_RUN: ${{ inputs.dry_run }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Validate version
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "::error::version must look like 0.1.7"; exit 1; }
+          if [[ "$DRY_RUN" != "true" ]] && gh release view "v$VERSION" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            echo "::error::Release v$VERSION already exists. codeMAX ships your changes with the next upstream stable version."
+            exit 1
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Setup dependencies
+        uses: ./.github/actions/setup-ci-deps
+        with:
+          install-args: --filter=t3... --filter=@t3tools/web... --filter=@t3tools/desktop... --filter=@t3tools/scripts...
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Align package versions to release version
+        run: node scripts/update-release-package-versions.ts "$VERSION"
+
+      # Same public T3 Connect values upstream ships; .env.example is not read by the build.
+      - name: Load public T3 Connect config
+        shell: bash
+        run: grep -E '^T3CODE_(CLERK_PUBLISHABLE_KEY|CLERK_JWT_TEMPLATE|CLERK_CLI_OAUTH_CLIENT_ID|RELAY_URL)=' .env.example >> "$GITHUB_ENV"
+
+      - name: Build desktop artifact
+        shell: bash
+        env:
+          T3CODE_TELEMETRY_CHANNEL: dev
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+          APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
+          APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          MACOS_PROVISIONING_PROFILE: ${{ secrets.MACOS_PROVISIONING_PROFILE }}
+        run: |
+          set -euo pipefail
+          args=(--platform mac --target dmg --arch arm64 --build-version "$VERSION" --verbose)
+          if [[ "$DRY_RUN" == "true" ]]; then
+            echo "Dry run: building unsigned."
+          else
+            for name in CSC_LINK CSC_KEY_PASSWORD APPLE_API_KEY APPLE_API_KEY_ID APPLE_API_ISSUER APPLE_TEAM_ID MACOS_PROVISIONING_PROFILE; do
+              [[ -n "${!name}" ]] || { echo "::error::Missing secret $name (see CODEMAX.md)."; exit 1; }
+            done
+            key_path="$RUNNER_TEMP/AuthKey_${APPLE_API_KEY_ID}.p8"
+            printf '%s' "$APPLE_API_KEY" > "$key_path"
+            export APPLE_API_KEY="$key_path"
+            profile_path="$RUNNER_TEMP/codemax.provisionprofile"
+            printf '%s' "$MACOS_PROVISIONING_PROFILE" | base64 -D > "$profile_path"
+            security cms -D -i "$profile_path" > /dev/null
+            export T3CODE_APPLE_TEAM_ID="$APPLE_TEAM_ID"
+            export T3CODE_MACOS_PROVISIONING_PROFILE="$profile_path"
+            args+=(--signed)
+          fi
+          vp run dist:desktop:artifact "${args[@]}"
+          ls -la release
+
+      - name: Upload build (dry run)
+        if: inputs.dry_run
+        uses: actions/upload-artifact@v4
+        with:
+          name: codemax-${{ inputs.version }}-unsigned
+          path: |
+            release/*.dmg
+            release/*.zip
+            release/*.yml
+          retention-days: 7
+
+      - name: Publish release
+        if: ${{ !inputs.dry_run }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha="$(git rev-parse HEAD)"
+          shopt -s nullglob
+          assets=(release/*.dmg release/*.zip release/*.blockmap release/latest-mac.yml)
+          [[ -f release/latest-mac.yml ]] || { echo "::error::release/latest-mac.yml is missing; auto-update would not work."; exit 1; }
+          gh release create "v$VERSION" "${assets[@]}" \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$sha" \
+            --title "codeMAX $VERSION" \
+            --notes "Upstream [T3 Code v$VERSION](https://github.com/pingdotgg/t3code/releases/tag/v$VERSION) plus the codeMAX branches listed in \`.codemax/branches.txt\`, built from \`${sha:0:10}\`."
