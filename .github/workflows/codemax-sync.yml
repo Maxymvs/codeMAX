@@ -1,0 +1,77 @@
+name: codeMAX Sync
+
+# Every few hours: mirror upstream main to this fork's main, rebuild `codemax` from the latest
+# upstream stable tag plus .codemax/branches.txt, and start codemax-release.yml when that upstream
+# version has no codeMAX release yet. A failed run (usually a conflict) emails you; see CODEMAX.md.
+
+on:
+  schedule:
+    - cron: "17 */3 * * *"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Upstream tag to build from (default: latest stable)"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: codemax-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      # GITHUB_TOKEN cannot push commits that touch .github/workflows, and upstream changes those
+      # constantly, so pushes use a personal access token (Contents + Workflows: read/write).
+      - name: Check sync token
+        env:
+          SYNC_TOKEN: ${{ secrets.CODEMAX_SYNC_TOKEN }}
+        run: |
+          [[ -n "$SYNC_TOKEN" ]] || { echo "::error::Add the CODEMAX_SYNC_TOKEN secret (see CODEMAX.md)."; exit 1; }
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: fork/infra
+          fetch-depth: 0
+          token: ${{ secrets.CODEMAX_SYNC_TOKEN }}
+
+      - name: Configure git
+        run: |
+          git config user.name "codemax-sync[bot]"
+          git config user.email "codemax-sync@users.noreply.github.com"
+
+      - name: Rebuild codemax
+        id: sync
+        env:
+          TAG: ${{ inputs.tag }}
+        run: scripts/codemax/sync.sh --push ${TAG:+--tag "$TAG"}
+
+      # Upstream adds workflows that would run on its paid runners; keep only codemax-* active.
+      - name: Disable upstream workflows
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow list --repo "$GITHUB_REPOSITORY" --all --json id,path,state \
+            -q '.[] | select(.state == "active" and (.path | startswith(".github/workflows/codemax-") | not)) | .id' |
+            while read -r id; do gh workflow disable "$id" --repo "$GITHUB_REPOSITORY"; done
+
+      - name: Start release if this version is new
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.sync.outputs.version }}
+        run: |
+          if gh release view "v$VERSION" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            echo "codeMAX v$VERSION is already released."
+          elif [[ -n "$(gh run list --repo "$GITHUB_REPOSITORY" --workflow codemax-release.yml --json status -q '.[] | select(.status != "completed") | .status')" ]]; then
+            echo "A codeMAX Release run is already in progress."
+          else
+            gh workflow run codemax-release.yml --repo "$GITHUB_REPOSITORY" --ref codemax -f version="$VERSION" -f ref=codemax
+            echo "Started codeMAX Release for v$VERSION."
+          fi
