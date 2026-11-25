@@ -6,12 +6,12 @@ T3 Code app without sharing anything with it.
 
 ## Branches
 
-| Branch       | What it is                                                                                    |
-| ------------ | --------------------------------------------------------------------------------------------- |
-| `main`       | Exact mirror of upstream `main`. Never commit here.                                           |
-| `fork/infra` | Fork-only changes: app identity, these workflows, this file. Never sent upstream.             |
-| `feat/*`, `fix/*` | One change each, branched from upstream `main`, so each can become an upstream PR.       |
-| `codemax`    | **Generated.** Latest upstream stable tag + every branch in `.codemax/branches.txt`. Default branch; releases build from it. Never commit here. |
+| Branch            | What it is                                                                                    |
+| ----------------- | --------------------------------------------------------------------------------------------- |
+| `main`            | Exact mirror of upstream `main`. Never commit here.                                           |
+| `dev`             | codeMAX's own changes: app identity, these workflows, this file, and every PR you merge. Never sent upstream. |
+| `feat/*`, `fix/*` | Optional: one change each, branched from upstream `main`, so it can become an upstream PR.    |
+| `codemax`         | **Generated.** Latest upstream stable tag + every branch in `.codemax/branches.txt`. Default branch; releases build from it. Never commit here. |
 
 `scripts/codemax/sync.sh` rebuilds `codemax`: it starts from the newest `vX.Y.Z` upstream tag and
 cherry-picks each listed branch's own commits on top. The **codeMAX Sync** workflow runs it every
@@ -20,16 +20,24 @@ cherry-picks each listed branch's own commits on top. The **codeMAX Sync** workf
 ## Everyday work
 
 ```sh
-# New change (also a future upstream PR)
+# Everyday change: PR into dev, then squash-merge it
+git fetch origin
+git switch -c my-thing origin/dev
+# ...commit, push, open a PR with base `dev`, squash-merge...
+
+# Change you also want to send upstream: its own branch from upstream main
 git fetch upstream
 git switch -c feat/my-thing upstream/main
 # ...commit...
 git push -u origin feat/my-thing
-echo "feat/my-thing" >> .codemax/branches.txt   # on fork/infra, then commit + push fork/infra
+echo "feat/my-thing" >> .codemax/branches.txt   # on dev, then commit + push dev
 
 # Rebuild codemax locally to try it (doesn't touch your checkout)
 scripts/codemax/sync.sh
 ```
+
+Keep `dev` linear: squash-merge PRs, and **rebase** it onto upstream, never merge upstream in. The
+sync copies commits one by one and skips merge commits, so a conflict fix inside a merge commit is lost.
 
 Your changes reach the installed app with the next upstream stable release (every few days),
 because codeMAX uses upstream's exact version numbers. To try something immediately, build locally

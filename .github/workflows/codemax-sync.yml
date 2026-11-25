@@ -43,7 +43,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: fork/infra
+          ref: dev
           fetch-depth: 0
           ssh-key: ${{ secrets.CODEMAX_SYNC_SSH_KEY }}
 
