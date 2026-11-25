@@ -6,12 +6,12 @@ T3 Code app without sharing anything with it.
 
 ## Branches
 
-| Branch            | What it is                                                                                    |
-| ----------------- | --------------------------------------------------------------------------------------------- |
-| `main`            | Exact mirror of upstream `main`. Never commit here.                                           |
-| `dev`             | codeMAX's own changes: app identity, these workflows, this file, and every PR you merge. Never sent upstream. |
-| `feat/*`, `fix/*` | Optional: one change each, branched from upstream `main`, so it can become an upstream PR.    |
-| `codemax`         | **Generated.** Latest upstream stable tag + every branch in `.codemax/branches.txt`. Default branch; releases build from it. Never commit here. |
+| Branch            | What it is                                                                                                                      |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `main`            | Exact mirror of upstream `main`. Never commit here.                                                                             |
+| `dev`             | codeMAX's own changes: app identity, these workflows, this file, and every PR you merge. Default branch. Never sent upstream.   |
+| `feat/*`, `fix/*` | Optional: one change each, branched from upstream `main`, so it can become an upstream PR.                                      |
+| `codemax`         | **Generated.** Latest upstream stable tag + every branch in `.codemax/branches.txt`. Releases build from it. Never commit here. |
 
 `scripts/codemax/sync.sh` rebuilds `codemax`: it starts from the newest `vX.Y.Z` upstream tag and
 cherry-picks each listed branch's own commits on top. The **codeMAX Sync** workflow runs it every
@@ -52,31 +52,33 @@ the exact `git rebase --onto` command. Rebase that branch onto the new tag, reso
 
 ## How it stays separate from T3 Code
 
-| | T3 Code | codeMAX |
-| - | - | - |
-| App name / bundle ID | T3 Code (Beta) / `com.t3tools.t3code` | codeMAX / `me.maxym.codemax` |
-| Data (settings, DB, worktrees, logs) | `~/.t3` | `~/.codemax` |
-| Electron profile, keychain entry | `~/Library/Application Support/t3code-v2` | `~/Library/Application Support/codemax` |
-| Background service | `com.t3tools.t3code.service` | `me.maxym.codemax.service` |
-| `t3code://` links | registered | not registered (links open T3 Code) |
-| Updates from | pingdotgg/t3code releases | Maxymvs/codeMAX releases |
-| Icon | stable icon | nightly icon |
+|                                      | T3 Code                                   | codeMAX                                 |
+| ------------------------------------ | ----------------------------------------- | --------------------------------------- |
+| App name / bundle ID                 | T3 Code (Beta) / `com.t3tools.t3code`     | codeMAX / `me.maxym.codemax`            |
+| Data (settings, DB, worktrees, logs) | `~/.t3`                                   | `~/.codemax`                            |
+| Electron profile, keychain entry     | `~/Library/Application Support/t3code-v2` | `~/Library/Application Support/codemax` |
+| Background service                   | `com.t3tools.t3code.service`              | `me.maxym.codemax.service`              |
+| `t3code://` links                    | registered                                | not registered (links open T3 Code)     |
+| Updates from                         | pingdotgg/t3code releases                 | Maxymvs/codeMAX releases                |
+| Icon                                 | stable icon                               | nightly icon                            |
 
 The renderer keeps the internal `t3code://app` origin on purpose: remote T3 servers (SSH,
 T3 Connect) only accept that origin. Don't use **Install `t3` command** in codeMAX; it would
 shadow T3 Code's `t3` on your PATH.
 
-## Secrets (already configured)
+## Secrets
 
 Repository → Settings → Secrets and variables → Actions. To rotate one, replace it there:
 
-| Secret | Value |
-| - | - |
-| `CODEMAX_SYNC_SSH_KEY` | Private half of the write **deploy key** "codeMAX Sync (Actions)" (Settings → Deploy keys). GITHUB_TOKEN cannot push workflow-file changes; a deploy key can. |
-| `CSC_LINK` | `base64 -i DeveloperID.p12` (Developer ID Application certificate + key) |
-| `CSC_KEY_PASSWORD` | Password of that `.p12` |
-| `APPLE_API_KEY` | Contents of the App Store Connect API key `AuthKey_XXXX.p8` |
-| `APPLE_API_KEY_ID` | That key's ID |
-| `APPLE_API_ISSUER` | Issuer ID (App Store Connect → Users and Access → Integrations) |
-| `APPLE_TEAM_ID` | 10-character Team ID |
-| `MACOS_PROVISIONING_PROFILE` | `base64 -i codeMAX.provisionprofile`: a **Developer ID** profile for App ID `me.maxym.codemax` with the **Associated Domains** capability |
+| Secret                       | Value                                                                                                                                                         |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `CODEMAX_SYNC_SSH_KEY`       | Private half of the write **deploy key** "codeMAX Sync (Actions)" (Settings → Deploy keys). GITHUB_TOKEN cannot push workflow-file changes; a deploy key can. |
+| `CSC_LINK`                   | `base64 -i DeveloperID.p12` (Developer ID Application certificate + key)                                                                                      |
+| `CSC_KEY_PASSWORD`           | Password of that `.p12`                                                                                                                                       |
+| `APPLE_API_KEY`              | Contents of the App Store Connect API key `AuthKey_XXXX.p8`                                                                                                   |
+| `APPLE_API_KEY_ID`           | That key's ID                                                                                                                                                 |
+| `APPLE_API_ISSUER`           | Issuer ID (App Store Connect → Users and Access → Integrations)                                                                                               |
+| `APPLE_TEAM_ID`              | 10-character Team ID                                                                                                                                          |
+| `MACOS_PROVISIONING_PROFILE` | `base64 -i codeMAX.provisionprofile`: a **Developer ID** profile for App ID `me.maxym.codemax` with the **Associated Domains** capability                     |
+
+The signing key, certificate and profile are kept in `~/codemax-signing` on the Mac that made them.

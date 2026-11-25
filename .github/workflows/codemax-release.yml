@@ -122,6 +122,9 @@ jobs:
           APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           MACOS_PROVISIONING_PROFILE: ${{ secrets.MACOS_PROVISIONING_PROFILE }}
+          # A signed Mac build needs a passkey domain. Upstream's Clerk domain never lists codeMAX's
+          # bundle ID, so passkey sign-in is unavailable in codeMAX either way.
+          T3CODE_CLERK_PASSKEY_RP_DOMAINS: maxym.me
         run: |
           set -euo pipefail
           args=(--platform mac --target dmg --arch arm64 --build-version "$VERSION" --verbose)
