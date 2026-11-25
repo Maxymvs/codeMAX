@@ -71,6 +71,20 @@ in a new thread's model picker to add or remove them. A regular click returns to
 single model. Choose a base branch and send. Each selection starts a separate thread
 and worktree while you stay in the new thread composer. This requires a Git project.
 
+## Group, sort, and filter the sidebar
+
+On web and desktop, the filter button next to the sidebar search opens the view menu:
+
+- **Group by**: **Status** keeps one active list, with Pinned, Working, Snoozed, and Settled
+  sections around it. **Project** puts active threads in a folder for each project.
+- **Sort by** orders the active threads. **Last updated** follows the time shown on each thread,
+  newest first, **Created** puts the newest threads first, and **Manual** keeps the order you
+  drag them into. Pinned, Working, Snoozed, and Settled keep their own order.
+- **Project** filters the sidebar. Click a project to show only it, or **Shift-click** to add or
+  remove projects. **All projects** clears the filter.
+
+Each device keeps its own choices.
+
 ## Pin and reorder threads
 
 Pin a thread from its menu to keep it above your active work.
@@ -108,7 +122,8 @@ edge to pin a thread. Section labels stay readable for the whole drag, and the s
 thread is over takes the accent color. Section labels also
 identify empty sections and a collapsed settled shelf.
 
-Drag within the pinned or active section to change its order. Other rows slide aside to show the
+Drag within the pinned or active section to change its order. On web and desktop, reordering the
+active section needs **Sort by → Manual**. Other rows slide aside to show the
 spot where the thread will land. Drops into either section keep the position you choose. On
 mobile, open a thread's menu and choose **Arrange threads**. Drag a handle within or between
 **Pinned** and **Active** to reorder, pin, or unpin. Drop onto the **Settled** divider to
@@ -122,7 +137,7 @@ On web and desktop, the list also animates section changes made with thread acti
 preference. While dragging, rows follow the insertion gap without replaying a second transition
 after the drop.
 
-New threads appear above the active threads you have arranged. Settling clears a thread's active
+With **Manual** sorting, new threads appear above the active threads you have arranged. Settling clears a thread's active
 position, so using **Un-settle** returns it to the top. Pinning and snoozing preserve its active
 position until you move it again. Thread activity does not change the order. The settled shelf
 continues to use settlement time.
@@ -158,13 +173,10 @@ This is on by default. Turn it off with **Settings → General → Working secti
 or **Settings → General → Working section** on iOS and Android. Each device keeps its own
 choice.
 
-While this is on, the active list is ordered by when each thread last came back to you, so you
-cannot drag or move threads within it. Your saved order returns when you turn it off.
-
 ### Group threads by project (beta)
 
-Turn on **Settings → Labs → Boring sidebar (group by project)** on web and desktop to put active
-threads in a folder for each project. Pinned projects come first. A project with no active
+Choose **Group by → Project** in the sidebar's view menu, or turn on **Settings → Labs → Boring
+sidebar (group by project)**, on web and desktop to put active threads in a folder for each project. Pinned projects come first. A project with no active
 threads has no folder unless it is pinned or you pick it in the project filter. An archived
 project's folder comes last and shows only while it has active threads. Click a folder to open or
 close it. A closed folder shows how many threads it holds, and a dot when one of them

@@ -2555,7 +2555,6 @@
   "2d1c111e1b4ae0b0": "Thread „{title}“ löschen?",
   "c568ab8dad798ec5": "Dadurch wird der Gesprächsverlauf dieses Threads dauerhaft gelöscht.",
   "0fd1c746a0e38003": "Thread konnte nicht gelöscht werden",
-  "1c8fc3c4a42949ab": "Projekte: {projects}",
   "165511761be2855c": "Projekte durchsuchen",
   "a46a6467883575a4": "Projekte durchsuchen...",
   "fdc0e086438a3045": "Projekteinstellungen für {project}",
@@ -12975,5 +12974,16 @@
   "201490988858b511": "zurückgezogen von {by}",
   "99451a5d2d40440f": "Zurückgezogen von {by}.",
   "3ee30a50b70fffab": "Zurückgezogen von {by}: {reason}",
-  "92e129bf413a1220": "zurückgezogen"
+  "92e129bf413a1220": "zurückgezogen",
+  "6cc647d483df0e24": "Ansichtsoptionen, Projekte: {projects}",
+  "46edecc2189d4076": "Ansichtsoptionen",
+  "fcb85784508bdb94": "Alle",
+  "31dbc5a7e2daa2ec": "{project} +{count}",
+  "d8ff792c8eedcf4b": "Gruppieren nach",
+  "650408c027f2a274": "Sortieren nach",
+  "6ec93b1973901af9": "Status",
+  "8a8d6c6c76fe9acf": "Projekt",
+  "763154818efeda22": "Zuletzt aktualisiert",
+  "3fbcce89da675bb5": "Erstellungsdatum",
+  "c68a5a0829bc835a": "Manuell"
 }
