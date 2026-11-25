@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Rebuilds the `codemax` branch from the latest upstream stable tag plus the branches listed in
-# .codemax/branches.txt (read from origin/fork/infra), using a temporary worktree so your current
+# .codemax/branches.txt (read from origin/dev), using a temporary worktree so your current
 # checkout is left alone.
 #
 #   scripts/codemax/sync.sh                 # rebuild local `codemax` from the latest stable tag
@@ -12,7 +12,7 @@ set -euo pipefail
 
 UPSTREAM_URL="https://github.com/pingdotgg/t3code.git"
 TARGET_BRANCH="codemax"
-LIST_REF="origin/fork/infra"
+LIST_REF="origin/dev"
 LIST_PATH=".codemax/branches.txt"
 
 tag=""
