@@ -60,7 +60,13 @@ the exact `git rebase --onto` command. Rebase that branch onto the new tag, reso
 | Background service                   | `com.t3tools.t3code.service`              | `me.maxym.codemax.service`              |
 | `t3code://` links                    | registered                                | not registered (links open T3 Code)     |
 | Updates from                         | pingdotgg/t3code releases                 | Maxymvs/codeMAX releases                |
-| Icon                                 | stable icon                               | nightly icon                            |
+| Icon                                 | T3 icon                                   | `assets/codemax` (MAX on black metal)   |
+| Name in the app's text               | T3 Code                                   | codeMAX (release builds only, below)    |
+
+Release builds run `scripts/codemax/rebrand.ts` on their throwaway checkout before building. It
+renames "T3 Code" to "codeMAX" in the web, desktop and server text, and moves the web and desktop
+translations to the renamed strings' new keys. `dev` keeps upstream's text so syncs never conflict;
+don't commit the script's output. Local `dist:desktop:*` builds skip it and still say T3 Code.
 
 The renderer keeps the internal `t3code://app` origin on purpose: remote T3 servers (SSH,
 T3 Connect) only accept that origin. Don't use **Install `t3` command** in codeMAX; it would
