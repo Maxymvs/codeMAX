@@ -2767,12 +2767,12 @@ export function resolveDesktopWebAssetBrand(version: string): WebAssetBrand {
 }
 
 export function resolveDesktopBuildIconAssets(version: string): DesktopBuildIconAssets {
-  // codeMAX: always use the alternate (nightly) icon so it is distinguishable from T3 Code in the Dock.
+  // codeMAX: its own icon in every build, so it never looks like T3 Code in the Dock.
   if (version.length > 0) {
     return {
-      macIconPng: BRAND_ASSET_PATHS.nightlyMacIconPng,
-      linuxIconPng: BRAND_ASSET_PATHS.nightlyLinuxIconPng,
-      windowsIconIco: BRAND_ASSET_PATHS.nightlyWindowsIconIco,
+      macIconPng: "assets/codemax/codemax-1024.png",
+      linuxIconPng: "assets/codemax/codemax-1024.png",
+      windowsIconIco: "assets/codemax/codemax-windows.ico",
     };
   }
 
