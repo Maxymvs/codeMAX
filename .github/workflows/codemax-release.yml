@@ -65,6 +65,10 @@ jobs:
       - name: Align package versions to release version
         run: node scripts/update-release-package-versions.ts "$VERSION"
 
+      # Only this throwaway checkout is rewritten; see CODEMAX.md.
+      - name: Rename T3 Code to codeMAX in the app's text
+        run: node scripts/codemax/rebrand.ts
+
       # Same public T3 Connect values upstream ships; .env.example is not read by the build.
       - name: Load public T3 Connect config
         shell: bash
