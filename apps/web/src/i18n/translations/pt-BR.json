@@ -2555,7 +2555,6 @@
   "2d1c111e1b4ae0b0": "Excluir a thread \"{title}\"?",
   "c568ab8dad798ec5": "Isso apaga permanentemente o histórico de conversa desta thread.",
   "0fd1c746a0e38003": "Falha ao excluir a thread",
-  "1c8fc3c4a42949ab": "Projetos: {projects}",
   "165511761be2855c": "Pesquisar projetos",
   "a46a6467883575a4": "Pesquisar projetos...",
   "fdc0e086438a3045": "Configurações do projeto {project}",
@@ -12975,5 +12974,16 @@
   "201490988858b511": "retirada por {by}",
   "99451a5d2d40440f": "Retirada por {by}.",
   "3ee30a50b70fffab": "Retirada por {by}: {reason}",
-  "92e129bf413a1220": "retirada"
+  "92e129bf413a1220": "retirada",
+  "6cc647d483df0e24": "Opções de exibição, projetos: {projects}",
+  "46edecc2189d4076": "Opções de exibição",
+  "fcb85784508bdb94": "Todos",
+  "31dbc5a7e2daa2ec": "{project} +{count}",
+  "d8ff792c8eedcf4b": "Agrupar por",
+  "650408c027f2a274": "Ordenar por",
+  "6ec93b1973901af9": "Status",
+  "8a8d6c6c76fe9acf": "Projeto",
+  "763154818efeda22": "Última atualização",
+  "3fbcce89da675bb5": "Data de criação",
+  "c68a5a0829bc835a": "Manual"
 }

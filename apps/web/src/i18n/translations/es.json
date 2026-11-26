@@ -2555,7 +2555,6 @@
   "2d1c111e1b4ae0b0": "¿Eliminar el hilo \"{title}\"?",
   "c568ab8dad798ec5": "Esto borra de forma permanente el historial de conversación de este hilo.",
   "0fd1c746a0e38003": "No se pudo eliminar el hilo",
-  "1c8fc3c4a42949ab": "Proyectos: {projects}",
   "165511761be2855c": "Buscar proyectos",
   "a46a6467883575a4": "Buscar proyectos...",
   "fdc0e086438a3045": "Ajustes del proyecto {project}",
@@ -12970,5 +12969,16 @@
   "201490988858b511": "retirada por {by}",
   "99451a5d2d40440f": "Retirada por {by}.",
   "3ee30a50b70fffab": "Retirada por {by}: {reason}",
-  "92e129bf413a1220": "retirada"
+  "92e129bf413a1220": "retirada",
+  "6cc647d483df0e24": "Opciones de vista, proyectos: {projects}",
+  "46edecc2189d4076": "Opciones de vista",
+  "fcb85784508bdb94": "Todos",
+  "31dbc5a7e2daa2ec": "{project} +{count}",
+  "d8ff792c8eedcf4b": "Agrupar por",
+  "650408c027f2a274": "Ordenar por",
+  "6ec93b1973901af9": "Estado",
+  "8a8d6c6c76fe9acf": "Proyecto",
+  "763154818efeda22": "Última actualización",
+  "3fbcce89da675bb5": "Fecha de creación",
+  "c68a5a0829bc835a": "Manual"
 }
