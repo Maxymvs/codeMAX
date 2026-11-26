@@ -2555,7 +2555,6 @@
   "2d1c111e1b4ae0b0": "Delete thread \"{title}\"?",
   "c568ab8dad798ec5": "This permanently clears conversation history for this thread.",
   "0fd1c746a0e38003": "Failed to delete thread",
-  "1c8fc3c4a42949ab": "Projects: {projects}",
   "165511761be2855c": "Search projects",
   "a46a6467883575a4": "Search projects...",
   "fdc0e086438a3045": "Project settings for {project}",
@@ -12984,5 +12983,16 @@
   "201490988858b511": "withdrawn by {by}",
   "99451a5d2d40440f": "Withdrawn by {by}.",
   "3ee30a50b70fffab": "Withdrawn by {by}: {reason}",
-  "92e129bf413a1220": "withdrawn"
+  "92e129bf413a1220": "withdrawn",
+  "6cc647d483df0e24": "View options, projects: {projects}",
+  "46edecc2189d4076": "View options",
+  "fcb85784508bdb94": "All",
+  "31dbc5a7e2daa2ec": "{project} +{count}",
+  "d8ff792c8eedcf4b": "Group by",
+  "650408c027f2a274": "Sort by",
+  "6ec93b1973901af9": "Status",
+  "8a8d6c6c76fe9acf": "Project",
+  "763154818efeda22": "Last updated",
+  "3fbcce89da675bb5": "Created",
+  "c68a5a0829bc835a": "Manual"
 }

@@ -2555,7 +2555,6 @@
   "2d1c111e1b4ae0b0": "Supprimer le fil « {title} » ?",
   "c568ab8dad798ec5": "Cela efface définitivement l’historique de conversation de ce fil.",
   "0fd1c746a0e38003": "Échec de la suppression du fil",
-  "1c8fc3c4a42949ab": "Projets : {projects}",
   "165511761be2855c": "Rechercher des projets",
   "a46a6467883575a4": "Rechercher des projets...",
   "fdc0e086438a3045": "Paramètres du projet {project}",
@@ -12975,5 +12974,16 @@
   "201490988858b511": "retirée par {by}",
   "99451a5d2d40440f": "Retirée par {by}.",
   "3ee30a50b70fffab": "Retirée par {by} : {reason}",
-  "92e129bf413a1220": "retirée"
+  "92e129bf413a1220": "retirée",
+  "6cc647d483df0e24": "Options d’affichage, projets : {projects}",
+  "46edecc2189d4076": "Options d’affichage",
+  "fcb85784508bdb94": "Tous",
+  "31dbc5a7e2daa2ec": "{project} +{count}",
+  "d8ff792c8eedcf4b": "Grouper par",
+  "650408c027f2a274": "Trier par",
+  "6ec93b1973901af9": "Statut",
+  "8a8d6c6c76fe9acf": "Projet",
+  "763154818efeda22": "Dernière mise à jour",
+  "3fbcce89da675bb5": "Date de création",
+  "c68a5a0829bc835a": "Manuel"
 }

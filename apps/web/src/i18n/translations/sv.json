@@ -2555,7 +2555,6 @@
   "2d1c111e1b4ae0b0": "Ta bort tråden ”{title}”?",
   "c568ab8dad798ec5": "Det här rensar konversationshistoriken för den här tråden permanent.",
   "0fd1c746a0e38003": "Det gick inte att ta bort tråden",
-  "1c8fc3c4a42949ab": "Projekt: {projects}",
   "165511761be2855c": "Sök projekt",
   "a46a6467883575a4": "Sök projekt...",
   "fdc0e086438a3045": "Projektinställningar för {project}",
@@ -12982,5 +12981,16 @@
   "201490988858b511": "återkallad av {by}",
   "99451a5d2d40440f": "Återkallad av {by}.",
   "3ee30a50b70fffab": "Återkallad av {by}: {reason}",
-  "92e129bf413a1220": "återkallad"
+  "92e129bf413a1220": "återkallad",
+  "6cc647d483df0e24": "Visningsalternativ, projekt: {projects}",
+  "46edecc2189d4076": "Visningsalternativ",
+  "fcb85784508bdb94": "Alla",
+  "31dbc5a7e2daa2ec": "{project} +{count}",
+  "d8ff792c8eedcf4b": "Gruppera efter",
+  "650408c027f2a274": "Sortera efter",
+  "6ec93b1973901af9": "Status",
+  "8a8d6c6c76fe9acf": "Projekt",
+  "763154818efeda22": "Senast uppdaterad",
+  "3fbcce89da675bb5": "Skapad",
+  "c68a5a0829bc835a": "Manuell"
 }
